@@ -70,7 +70,7 @@ root.configure(menu=mainMenu)
 
 change_menu_color(fileMenu, (64, 64, 64), (255, 255, 255))
 
-textEditor = tkinter.Text(root, wrap='word', bg=rgb_to_hex((64, 64, 64)), fg=rgb_to_hex((255, 255, 255)), insertbackground=rgb_to_hex((255, 255, 255)), selectbackground='blue', selectforeground='white')
+textEditor = tkinter.Text(root, font="helventica 12", wrap='word', bg=rgb_to_hex((64, 64, 64)), fg=rgb_to_hex((255, 255, 255)), insertbackground=rgb_to_hex((255, 255, 255)), selectbackground='blue', selectforeground='white')
 textEditor.pack(expand=True, fill='both', pady=1)
 
 root.bind("<Control-n>", lambda x: newFile(root, textEditor))
