@@ -1,49 +1,80 @@
-import tkinter as tk
+import customtkinter
+import tkinter
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+import os
 
-def open_file(window, text_edit):
-	filepath = askopenfilename(filetypes=[("Text Files", "*.txt")])
-	if not filepath:
-		return
-	text_edit.delete(1.0, tk.END)
-	with open(filepath, "r") as f:
-		content = f.read()
-		text_edit.insert(tk.END, content)
-	window.title(f"Opened File : {filepath}")
-	
-def save_file(window, text_edit):
-	filepath = asksaveasfilename(filetypes=[("Text Files", "*.txt")])
-	if not filepath:
-		return
-	with open(filepath, "w") as f:
-		content = text_edit.get(1.0, tk.END)
-		f.write(content)
-	window.title(f"Opened File : {filepath}")
+customtkinter.set_appearance_mode("System")
 
-def main():
-	window = tk.Tk()
-	window.title("Text Editor")
-	window.rowconfigure(0, minsize=400)
-	window.columnconfigure(1, minsize=500)
-	
-	text_edit = tk.Text(window, font="helventica 12")
-	text_edit.grid(row=0, column=1)
-	
-	frame = tk.Frame(window, relief=tk.RAISED, bd=2)
-	
-	save_but = tk.Button(frame, text="Save", command=lambda: save_file(window, text_edit))
-	save_but.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
-	
-	open_but = tk.Button(frame, text="Open", command=lambda: open_file(window, text_edit))
-	open_but.grid(row=1, column=0, padx=5)
-	
-	frame.grid(row=0, column=0, sticky="ns")
-	
-	window.bind("<Control-s>", lambda x: save_file(window, text_edit))
-	window.bind("<Control-o>", lambda x: open_file(window, text_edit))
-	
-	window.mainloop()
-	
-main()
+def rgb_to_hex(rgb):
+    return '#%02x%02x%02x' % rgb
 
-#https://www.youtube.com/watch?v=A_Sfru99QNA
+def change_menu_color(menu, bg_rgb, fg_rgb):
+    menu.config(background=rgb_to_hex(bg_rgb), foreground=rgb_to_hex(fg_rgb), activebackground=rgb_to_hex(bg_rgb), activeforeground=rgb_to_hex(fg_rgb))
+    for i in range(menu.index("end") + 1):
+        menu.entryconfig(i, background=rgb_to_hex(bg_rgb), foreground=rgb_to_hex(fg_rgb), activebackground=rgb_to_hex(bg_rgb), activeforeground=rgb_to_hex(fg_rgb))
+
+#New File
+def newFile(form, textEditor):
+    textEditor.delete(1.0, tkinter.END)
+    form.title("Text Editor")
+
+#Open File
+def openFile(form, textEditor):
+    openFile = askopenfilename(filetypes=[("All Files", ".*"), ("Text Files", ".txt")])
+    if not openFile:
+        return
+    newFile(form, textEditor)
+    with open(openFile, "r") as f:
+        content = f.read()
+        textEditor.insert(1.0, content)
+    form.title(f"Text Editor - {os.path.basename(openFile)}")
+
+#Save File
+def saveFile(form, textEditor):
+    saveFile = asksaveasfilename(filetypes=[("All Files", ".*"), ("Text Files", ".txt")])
+    if not saveFile:
+        return
+    with open(saveFile, "w") as f:
+        content = textEditor.get(1.0, tkinter.END)
+        f.write(content)
+    form.title(f"Text Editor - {os.path.basename(saveFile)}")
+
+#SaveAs File
+def saveAsFile(form, textEditor):
+    saveFile = asksaveasfilename(filetypes=[("All Files", ".*"), ("Text Files", ".txt")])
+    if not saveFile:
+        return
+    with open(saveFile, "w") as f:
+        content = textEditor.get(1.0, tkinter.END)
+        f.write(content)
+    form.title(f"Text Editor - {os.path.basename(saveFile)}")
+
+#Main Form
+root = customtkinter.CTk()
+root.geometry("1000x750+200+200")
+root.title("Text Editor")
+
+#main menu
+mainMenu = tkinter.Menu(root)
+
+#file tab of main menu
+fileMenu = tkinter.Menu(mainMenu, tearoff=False)
+fileMenu.add_command(label="New File    ", command=lambda:newFile(root, textEditor))
+fileMenu.add_command(label="Open File   ", command=lambda:openFile(root, textEditor))
+fileMenu.add_command(label="Save    ", command=lambda:saveFile(root, textEditor))
+fileMenu.add_command(label="Save As    ", command=lambda:saveAsFile(root, textEditor))
+mainMenu.add_cascade(label="    File    ", menu=fileMenu)
+
+
+root.configure(menu=mainMenu)
+
+change_menu_color(fileMenu, (64, 64, 64), (255, 255, 255))
+
+textEditor = tkinter.Text(root, wrap='word', bg=rgb_to_hex((64, 64, 64)), fg=rgb_to_hex((255, 255, 255)), insertbackground=rgb_to_hex((255, 255, 255)), selectbackground='blue', selectforeground='white')
+textEditor.pack(expand=True, fill='both', pady=1)
+
+root.bind("<Control-n>", lambda x: newFile(root, textEditor))
+root.bind("<Control-o>", lambda x: openFile(root, textEditor))
+root.bind("<Control-s>", lambda x: saveFile(root, textEditor))
+
+root.mainloop()
