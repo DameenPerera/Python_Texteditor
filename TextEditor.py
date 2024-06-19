@@ -3,7 +3,9 @@ import tkinter
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import os
 
-customtkinter.set_appearance_mode("System")
+customtkinter.set_appearance_mode("Dark")
+
+filePath = ""
 
 def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % rgb
@@ -13,10 +15,13 @@ def change_menu_color(menu, bg_rgb, fg_rgb):
     for i in range(menu.index("end") + 1):
         menu.entryconfig(i, background=rgb_to_hex(bg_rgb), foreground=rgb_to_hex(fg_rgb), activebackground=rgb_to_hex(bg_rgb), activeforeground=rgb_to_hex(fg_rgb))
 
+
 #New File
 def newFile(form, textEditor):
     textEditor.delete(1.0, tkinter.END)
     form.title("Text Editor")
+    global filePath
+    filePath = ""
 
 #Open File
 def openFile(form, textEditor):
@@ -28,16 +33,18 @@ def openFile(form, textEditor):
         content = f.read()
         textEditor.insert(1.0, content)
     form.title(f"Text Editor - {os.path.basename(openFile)}")
+    global filePath
+    filePath = openFile
 
 #Save File
 def saveFile(form, textEditor):
-    saveFile = asksaveasfilename(filetypes=[("All Files", ".*"), ("Text Files", ".txt")])
-    if not saveFile:
-        return
-    with open(saveFile, "w") as f:
-        content = textEditor.get(1.0, tkinter.END)
-        f.write(content)
-    form.title(f"Text Editor - {os.path.basename(saveFile)}")
+	global filePath
+	if not filePath:
+		saveAsFile(form, textEditor)
+	else:
+		with open(filePath, "w") as f:
+			f.write(textEditor.get(1.0, tkinter.END))
+		form.title(f"Text Editor - {os.path.basename(filePath)}")
 
 #SaveAs File
 def saveAsFile(form, textEditor):
@@ -48,6 +55,8 @@ def saveAsFile(form, textEditor):
         content = textEditor.get(1.0, tkinter.END)
         f.write(content)
     form.title(f"Text Editor - {os.path.basename(saveFile)}")
+    global filePath
+    filePath = saveFile
 
 #Main Form
 root = customtkinter.CTk()
