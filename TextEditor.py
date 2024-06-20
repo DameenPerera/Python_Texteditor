@@ -3,7 +3,7 @@ import tkinter
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import os
 
-customtkinter.set_appearance_mode("Dark")
+customtkinter.set_appearance_mode("System")
 
 filePath = ""
 
