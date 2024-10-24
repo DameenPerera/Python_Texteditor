@@ -1,2 +1,2 @@
 # Python_Texteditor
-For Testing
+Simple python texteditor
