@@ -1,2 +1,2 @@
 # Python_Texteditor
-Simple python texteditor
+Simple python texteditor that made with python
